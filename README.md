@@ -78,3 +78,7 @@ An example of data from command and displayed
 
 ## Example Liri CLI Demo
 [Liri Demo](screenshots/liriDemo.mp4)
+
+## Additional Features
+
+Stored logging of request stored in the log.txt file
