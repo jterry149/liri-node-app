@@ -56,18 +56,22 @@ Example:
 ## Liri Commands
 
 * spotify-this-song
+ 
  An example of data from command and displayed
  ![song example](screenshots/songData.png)
 
 * movie-this
+
 An example of data from command and displayed
 ![movie example](screenshots/movieData.png)
 
 * concert-this
+
 An example of data from command and displayed
 ![concert example](screenshots/concertData.png)
 
 * do-what-it-says
+
 An example of data from command and displayed
 ![concert example](screenshots/whatData.png)
 
