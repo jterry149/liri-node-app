@@ -12,10 +12,11 @@ var spotify = new Spotify(keys.spotify);
 var bandInTown = keys.bit.id;
 var omdb = keys.omdb.id;
 
+// variable to store arguments to log
 var stored =[];
 
 // This function displays the concerts using the Bands in Town API
-function concertThis(artist,callback) 
+function concertThis(artist,call) 
 {
 
     // Varaible to call API 
@@ -37,7 +38,8 @@ function concertThis(artist,callback)
             {
 
                 // Retrieve  data
-                if(data[i] != undefined) {
+                if(data[i] != undefined) 
+                {
                     console.log("\nVenue: "+data[i].venue.name);
                     if(data[i].venue.city != '')
                         console.log("\nCity: "+data[i].venue.city);
@@ -49,19 +51,20 @@ function concertThis(artist,callback)
                     console.log("\nDate: "+ datetime+"\n");
                     stored.push(...[data[i].venue.name,data[i].venue.city,data[i].venue.region,data[i].venue.country,datetime]);
                 }
-                if(data[i] === undefined && i===0) {
-                    console.log("\nSorry we don't see any concerts. :(")
+                if(data[i] === undefined && i===0) 
+                {
+                    console.log("\nSorry we don't see any concerts. Try entering another place. :(")
                     stored.push("Sorry we don't see any concerts. :(");
                 }
             }
         }
-        callback();
+        call();
     });
     
 }
 
-// function to play song
-function spotifyThisSong(song, callback)
+// function to search the spotify API
+function spotifyThisSong(song, call)
 {
     // Default a song if no song chosen
     if(song == undefined)
@@ -69,93 +72,64 @@ function spotifyThisSong(song, callback)
     
     else
         // search exact song
-        song= "\""+song+"\"";   
+        song = "\""+song+"\"";   
     
-    spotify.search({ type: 'track', query: song}, function(error, data)
-    {
-      if(!error)
-      {
-        for(var i = 0; i < data.tracks.items.length; i++)
+        spotify.search({ type: 'track', query: song }, function(err, data) 
         {
-          var songData = data.tracks.items[i];
-          
-          // artist
-          console.log("Artist: " + songData.artists[0].name);
-          // song name
-          console.log("Song: " + songData.name);
-          // spotify preview link
-          console.log("Preview URL: " + songData.preview_url);
-          // album name
-          console.log("Album: " + songData.album.name);
-          console.log("-----------------------");
-          
-          //adds text to log.txt
-          fs.appendFile('log.txt', songData.artists[0].name);
-          fs.appendFile('log.txt', songData.name);
-          fs.appendFile('log.txt', songData.preview_url);
-          fs.appendFile('log.txt', songData.album.name);
-          fs.appendFile('log.txt', "-----------------------");
-        }
-      } else{
-        console.log('Error occurred.');
-      }
-    callback();
-    });
-}
+            if (err) 
+            {
+              return console.log('Error occurred: ' + err);
+            }
+            console.log("\nArtist(s):");
+            for(let i=0; i <data.tracks.items[0].artists.length;i++) 
+            {
+                console.log(data.tracks.items[0].artists[i].name);
+                stored.push(data.tracks.items[0].artists[i].name);
+            }
+            console.log("\nSong Name:")
+            console.log(data.tracks.items[0].name+"\n");
+            console.log("Preview Link:")
+            console.log(data.tracks.items[0].preview_url+"\n");
+            console.log("Song Album:")
+            console.log(data.tracks.items[0].album.name);
+            stored.push(...[data.tracks.items[0].name,data.tracks.items[0].preview_url,data.tracks.items[0].album.name]);
+            call();
+        });
+    }
 
-function movieThis(title, callback)
+function movieThis(title, call)
 {
     // If statement if no title is defined show this movie title
     if (!title)
     {
         title = "Mr. Nobody";
+            console.log("-----------------------");
+            console.log("If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
+            console.log("It's on Netflix!");
+
     }
-    var omdbURL = "http://www.omdbapi.com/?t="+"\""+title+"\""+"&y=&plot=short&type=movie&tomatoes=true&apikey="+ omdb;
+    // A variable to call the movie API
+    var omdbURL = "http://www.omdbapi.com/?t="+"\""+ title +"\"" + "&y=&plot=short&type=movie&tomatoes=true&apikey=" + omdb;
   
     request(omdbURL, function (error, response, body){
         if(!error && response.statusCode == 200)
         {
-            var body = JSON.parse(body);
+            var parse = JSON.parse(body);
 
             // Displays movie information
-            console.log("\nMovie Title: "+ body.Title);
-            console.log("\nYear Released: "+ body.Year);
-            console.log("\nIMDB Rating: "+ body.Ratings[0].Value);
-            console.log("\nRotten Tomatoes Rating: "+body.Ratings[1].Value);
-            console.log("\nCountry Produced: "+body.Country );
-            console.log("\nMovie Language(s): "+body.Language);
-            console.log("\nMovie plot: "+body.Plot);
-            console.log("\nMovie Actors: "+body.Actors);
-  
-        //adds text to log.txt
-            fs.appendFile('log.txt', "Title: " + body.Title);
-            fs.appendFile('log.txt', "Year Released: " + body.Year);
-            fs.appendFile('log.txt', "IMDB Rating: " + body.imdbRating);
-            fs.appendFile('log.txt', "Rotten Tomatoes Rating: " + body.tomatoRating);
-            fs.appendFile('log.txt', "Country Produced: " + body.Country);
-            fs.appendFile('log.txt', " Movie Language: " + body.Language);
-            fs.appendFile('log.txt', "Movie Plot: " + body.Plot);
-            fs.appendFile('log.txt', "Movie Actors: " + body.Actors);
-
-        } 
-        else
-        {
-            console.log('Error occurred.')
+            console.log("\nMovie Title: "+ parse.Title);
+            console.log("\nYear Released: "+ parse.Year);
+            console.log("\nIMDB Rating: "+ parse.Ratings[0].Value);
+            console.log("\nRotten Tomatoes Rating: "+parse.Ratings[1].Value);
+            console.log("\nCountry Produced: "+parse.Country );
+            console.log("\nMovie Language(s): "+parse.Language);
+            console.log("\nMovie plot: "+parse.Plot);
+            console.log("\nMovie Actors: "+parse.Actors);
         }
-        if(title === "Mr. Nobody")
-        {
-            console.log("-----------------------");
-            console.log("If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
-            console.log("It's on Netflix!");
-  
             //adds text to log.txt
-            fs.appendFile('log.txt', "-----------------------");
-            fs.appendFile('log.txt', "If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
-            fs.appendFile('log.txt', "It's on Netflix!");
-        }
-    callback();
-    });
-  
+            stored.push(...[parse.Title,parse.Year,parse.Ratings[0].Value,parse.Ratings[1].Value,parse.Country,parse.Language,parse.Plot,parse.Actors]);
+        call();
+    });  
 }
 
 //This function reads the random.txt file and passes arguments
@@ -188,7 +162,7 @@ function storeInfo()
         {
             return console.log(error);
         }
-        console.log('\ncommand has been stored.')
+        console.log('\ncommand has been stored into the file.')
 
     });
 }
@@ -196,7 +170,7 @@ function storeInfo()
 // Function to handle the user commands
 function selectCommand(command,nodeArg) 
 {
-    //grab function name
+    // grab function name
     stored.push(command)
     if(nodeArg)
         stored.push(nodeArg);
@@ -226,14 +200,14 @@ function selectCommand(command,nodeArg)
             doThing();
             break;
         default:
-            console.log("Invalid command. Please try again.");
+            console.log("Invalid command. Please try again. Commands are: concert-this, movie-this, spotify-this-song, and do-what-it-says.");
         break;
     }  
 }
 
 //Stored User argument's array
-var nodeArg = process.argv[2];
-var command = process.argv[3];
+var command = process.argv[2];
+var nodeArg = process.argv[3];
 
 // A function call 
 selectCommand(command,nodeArg);
