@@ -77,6 +77,7 @@ An example of data from command and displayed
 
 
 ## Example Liri CLI Demo
+This is downloadable demo in mp format to view how the application should work in the command line.
 [Liri Demo](screenshots/liriDemo.mp4)
 
 ## Additional Features
